@@ -26,6 +26,15 @@ typedef enum
     INTERPRET_RUNTIME_ERROR
 } InterpretResult;
 
+#define EXCEPTION_HANDLERS_MAX 16
+
+struct ExceptionHandler
+{
+    uint8_t *catchIp;
+    Value *stackTop;
+    int frameCount;
+};
+
 static Value clockNative(int argCount, Value *args)
 {
     (void)argCount;
@@ -52,10 +61,13 @@ public:
     size_t bytesAllocated;
     size_t nextGC;
     ObjString *initString;
+    ExceptionHandler exceptionHandlers[EXCEPTION_HANDLERS_MAX];
+    int exceptionHandlerCount;
 
     VM() : frameCount(0), chunk(nullptr), ip(nullptr), stackTop(stack),
            objects(nullptr), grayCount(0), grayCapacity(0), grayStack(nullptr),
-           bytesAllocated(0), nextGC(1024 * 1024), initString(nullptr), openUpvalues(nullptr)
+           bytesAllocated(0), nextGC(1024 * 1024), initString(nullptr), openUpvalues(nullptr),
+           exceptionHandlerCount(0)
     {
     }
 
@@ -74,6 +86,7 @@ public:
     {
         stackTop = stack;
         frameCount = 0;
+        exceptionHandlerCount = 0;
     }
 
     void runtimeError(const char *format, ...)
@@ -861,6 +874,47 @@ private:
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 push(array->values[index]);
+                break;
+            }
+            case OP_TRY:
+            {
+                uint16_t offset = READ_SHORT();
+                if (exceptionHandlerCount >= EXCEPTION_HANDLERS_MAX)
+                {
+                    runtimeError("Too many nested exception handlers.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                ExceptionHandler *handler = &exceptionHandlers[exceptionHandlerCount++];
+                handler->catchIp = frame->ip + offset;
+                handler->stackTop = stackTop;
+                handler->frameCount = frameCount;
+                break;
+            }
+            case OP_TRY_END:
+            {
+                exceptionHandlerCount--;
+                break;
+            }
+            case OP_THROW:
+            {
+                Value thrown = pop();
+                if (exceptionHandlerCount == 0)
+                {
+                    push(thrown);
+                    runtimeError("Unhandled exception.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                ExceptionHandler *handler = &exceptionHandlers[--exceptionHandlerCount];
+                while (frameCount > handler->frameCount)
+                {
+                    closeUpvalues(frames[frameCount - 1].slots);
+                    frameCount--;
+                }
+                frame = &frames[frameCount - 1];
+                closeUpvalues(handler->stackTop);
+                stackTop = handler->stackTop;
+                push(thrown);
+                frame->ip = handler->catchIp;
                 break;
             }
             }

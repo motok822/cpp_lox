@@ -1,0 +1,15 @@
+fun inner() {
+    try {
+        throw "caught inside";
+    } catch (e) {
+        print e;
+    }
+    print "inner continues";
+}
+
+try {
+    inner();
+    print "outer continues";
+} catch (e) {
+    print "should not reach";
+}

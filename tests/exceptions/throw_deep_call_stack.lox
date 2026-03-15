@@ -1,0 +1,13 @@
+fun a() {
+    fun b() {
+        throw "deep";
+    }
+    b();
+}
+
+try {
+    a();
+} catch (e) {
+    print e;
+}
+print "ok";

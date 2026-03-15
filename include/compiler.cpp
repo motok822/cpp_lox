@@ -17,7 +17,7 @@ Compiler::ParseRule Compiler::rules[] = {
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_RIGHT_PAREN
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_LEFT_BRACE
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_RIGHT_BRACE
-    {nullptr, &Compiler::subscript, PREC_CALL},          // TOKEN_LEFT_BRACKET
+    {nullptr, &Compiler::subscript, PREC_CALL},        // TOKEN_LEFT_BRACKET
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_RIGHT_BRACKET
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_COMMA
     {nullptr, &Compiler::dot, PREC_CALL},              // TOKEN_DOT
@@ -54,6 +54,9 @@ Compiler::ParseRule Compiler::rules[] = {
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_VAR
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_WHILE
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_CONTINUE
+    {nullptr, nullptr, PREC_NONE},                     // TOKEN_TRY
+    {nullptr, nullptr, PREC_NONE},                     // TOKEN_CATCH
+    {nullptr, nullptr, PREC_NONE},                     // TOKEN_THROW
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_ERROR
     {nullptr, nullptr, PREC_NONE},                     // TOKEN_EOF
 };
@@ -1051,6 +1054,44 @@ void Compiler::returnStatement()
     }
 }
 
+void Compiler::tryStatement()
+{
+    consume(TOKEN_LEFT_BRACE, "Expect '{' after 'try'.");
+    int tryJump = emitJump(OP_TRY);
+
+    beginScope();
+    block();
+    endScope();
+
+    emitByte(OP_TRY_END);
+    int skipCatchJump = emitJump(OP_JUMP);
+
+    patchJump(tryJump);
+
+    consume(TOKEN_CATCH, "Expect 'catch' after try block.");
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after 'catch'.");
+    consume(TOKEN_IDENTIFIER, "Expect variable name in catch.");
+    Token catchVar = parser.previous;
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after catch variable.");
+    consume(TOKEN_LEFT_BRACE, "Expect '{' before catch body.");
+
+    beginScope();
+    addLocal(&catchVar);
+    markInitialized();
+
+    block();
+    endScope();
+
+    patchJump(skipCatchJump);
+}
+
+void Compiler::throwStatement()
+{
+    expression(false);
+    consume(TOKEN_SEMICOLON, "Expect ';' after throw expression.");
+    emitByte(OP_THROW);
+}
+
 void Compiler::statement(bool canAssign)
 {
     (void)canAssign;
@@ -1077,6 +1118,14 @@ void Compiler::statement(bool canAssign)
     else if (match(TOKEN_CONTINUE))
     {
         continueStatement();
+    }
+    else if (match(TOKEN_TRY))
+    {
+        tryStatement();
+    }
+    else if (match(TOKEN_THROW))
+    {
+        throwStatement();
     }
     else if (match(TOKEN_LEFT_BRACE))
     {

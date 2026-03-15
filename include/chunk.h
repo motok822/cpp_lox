@@ -51,6 +51,9 @@ typedef enum
     OP_ARRAY_GET_UPVALUE,
     OP_ARRAY_SET_UPVALUE,
     OP_INDEX_GET,
+    OP_TRY,
+    OP_TRY_END,
+    OP_THROW,
 } OpCode;
 
 class Chunk

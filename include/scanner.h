@@ -50,6 +50,9 @@ typedef enum
     TOKEN_VAR,
     TOKEN_WHILE,
     TOKEN_CONTINUE,
+    TOKEN_TRY,
+    TOKEN_CATCH,
+    TOKEN_THROW,
     // end of file.
     TOKEN_ERROR,
     TOKEN_EOF
@@ -201,6 +204,8 @@ private:
             {
                 switch (start[1])
                 {
+                case 'a':
+                    return checkKeyword(2, 3, "tch", TOKEN_CATCH);
                 case 'l':
                     return checkKeyword(2, 3, "ass", TOKEN_CLASS);
                 case 'o':
@@ -242,8 +247,12 @@ private:
                 switch (start[1])
                 {
                 case 'h':
+                    if (current - start > 2 && start[2] == 'r')
+                        return checkKeyword(3, 2, "ow", TOKEN_THROW);
                     return checkKeyword(2, 2, "is", TOKEN_THIS);
                 case 'r':
+                    if (current - start == 3)
+                        return checkKeyword(2, 1, "y", TOKEN_TRY);
                     return checkKeyword(2, 2, "ue", TOKEN_TRUE);
                 }
             }

@@ -149,6 +149,12 @@ int disassembleInstruction(Chunk *chunk, int offset)
         return simpleInstruction("OP_ARRAY", offset);
     case OP_INDEX_GET:
         return simpleInstruction("OP_INDEX_GET", offset);
+    case OP_TRY:
+        return jumpInstruction("OP_TRY", 1, chunk, offset);
+    case OP_TRY_END:
+        return simpleInstruction("OP_TRY_END", offset);
+    case OP_THROW:
+        return simpleInstruction("OP_THROW", offset);
     case OP_ARRAY_GET_GLOBAL:
         return arrayInstruction("OP_ARRAY_GET_GLOBAL", chunk, offset);
     case OP_ARRAY_SET_GLOBAL:

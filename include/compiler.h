@@ -178,6 +178,8 @@ private:
     void forStatement();
     void continueStatement();
     void returnStatement();
+    void tryStatement();
+    void throwStatement();
     void statement(bool canAssign);
     void declaration(bool canAssign);
 };

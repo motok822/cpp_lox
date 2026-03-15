@@ -1,0 +1,6 @@
+try {
+    throw "something went wrong";
+} catch (e) {
+    print e;
+}
+print "after try-catch";

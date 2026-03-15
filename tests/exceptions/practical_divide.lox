@@ -1,0 +1,14 @@
+fun divide(a, b) {
+    if (b == 0) {
+        throw "division by zero";
+    }
+    return a / b;
+}
+
+try {
+    print divide(10, 2);
+    print divide(10, 0);
+} catch (e) {
+    print e;
+}
+print "done";

@@ -1,0 +1,6 @@
+try {
+    print "no error";
+} catch (e) {
+    print "should not print";
+}
+print "ok";

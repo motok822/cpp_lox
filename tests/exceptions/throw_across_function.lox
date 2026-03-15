@@ -1,0 +1,11 @@
+fun risky() {
+    throw "oops";
+}
+
+try {
+    risky();
+    print "unreachable";
+} catch (e) {
+    print e;
+}
+print "done";
