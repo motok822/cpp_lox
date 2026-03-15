@@ -1,0 +1,9 @@
+fun makeGreeter(name) {
+    fun greet() {
+        print name;
+    }
+    return greet;
+}
+
+var hi = makeGreeter("hello");
+hi();

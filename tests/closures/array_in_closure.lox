@@ -1,0 +1,21 @@
+fun makeArray() {
+    var arr[3];
+    arr[0] = 10;
+    arr[1] = 20;
+    arr[2] = 30;
+
+    fun get() {
+        return arr;
+    }
+
+    fun set(i, val) {
+        arr[i] = val;
+    }
+
+    print get()[0];
+    print get()[2];
+    set(1, 99);
+    print get()[1];
+}
+
+makeArray();

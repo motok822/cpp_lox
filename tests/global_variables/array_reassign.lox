@@ -1,0 +1,7 @@
+var arr[2];
+arr[0] = "first";
+arr[1] = "second";
+print arr[0];
+arr[0] = "updated";
+print arr[0];
+print arr[1];

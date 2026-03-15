@@ -1,0 +1,22 @@
+class Animal {
+    speak() {
+        print "...";
+    }
+}
+class Dog < Animal {
+    speak() {
+        print "Woof!";
+    }
+}
+class Puppy < Dog {
+    speak() {
+        super.speak();
+        print "Yip!";
+    }
+}
+var a = Animal();
+a.speak();
+var d = Dog();
+d.speak();
+var p = Puppy();
+p.speak();

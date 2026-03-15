@@ -1,0 +1,17 @@
+class A {
+    greet() {
+        return "A";
+    }
+}
+class B < A {}
+class C < B {
+    greet() {
+        return "C";
+    }
+}
+var a = A();
+var b = B();
+var c = C();
+print a.greet();
+print b.greet();
+print c.greet();

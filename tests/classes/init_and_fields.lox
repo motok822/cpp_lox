@@ -1,0 +1,13 @@
+class Pair {
+    init(a, b) {
+        this.a = a;
+        this.b = b;
+    }
+    sum() {
+        return this.a + this.b;
+    }
+}
+var p = Pair(1, 2);
+print p.sum();
+print p.a;
+print p.b;

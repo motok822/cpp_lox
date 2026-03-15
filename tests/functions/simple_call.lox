@@ -1,0 +1,4 @@
+fun greet() {
+    print 42;
+}
+greet();

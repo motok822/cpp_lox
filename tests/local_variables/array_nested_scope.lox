@@ -1,0 +1,14 @@
+{
+    var outer[2];
+    outer[0] = 1;
+    outer[1] = 2;
+    {
+        var inner[2];
+        inner[0] = outer[0] + 10;
+        inner[1] = outer[1] + 10;
+        print inner[0];
+        print inner[1];
+    }
+    print outer[0];
+    print outer[1];
+}

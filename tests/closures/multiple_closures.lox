@@ -1,0 +1,17 @@
+fun makePair() {
+    var local = 0;
+
+    fun getter() {
+        return local;
+    }
+
+    fun setter(value) {
+        local = value;
+    }
+
+    print getter();
+    setter(10);
+    print getter();
+}
+
+makePair();

@@ -1,0 +1,22 @@
+class Base {
+    init(x) {
+        this.x = x;
+    }
+    getX() {
+        return this.x;
+    }
+}
+class Child < Base {
+    init(x, y) {
+        super.init(x);
+        this.y = y;
+    }
+    getY() {
+        return this.y;
+    }
+}
+var c = Child(10, 20);
+print c.getX();
+print c.getY();
+print c.x;
+print c.y;

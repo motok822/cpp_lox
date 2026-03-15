@@ -1,0 +1,17 @@
+var closure;
+
+fun outer() {
+    var a = "a";
+    fun middle() {
+        var b = "b";
+        fun inner() {
+            print a;
+            print b;
+        }
+        closure = inner;
+    }
+    middle();
+}
+
+outer();
+closure();

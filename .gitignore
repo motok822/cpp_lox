@@ -1,0 +1,4 @@
+clox
+*.o
+.vscode/
+.claude/
